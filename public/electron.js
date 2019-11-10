@@ -4,6 +4,20 @@ const path = require('path')
 const url = require('url');
 const isDev = require('electron-is-dev');
 
+const express = require('express');
+const expressApp = express();
+
+const port = process.env.PORT ? process.env.PORT : 4000;
+
+expressApp.get('/', function (req, res) {
+    res.send("Hello!");
+});
+
+const server = expressApp.listen(port, function () {
+    console.dir(`Express server listening on port ${port}`)
+})
+
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -26,6 +40,7 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
+        server.close();
         mainWindow = null
     })
 }
@@ -39,6 +54,7 @@ app.on('ready', createWindow)
 app.on('window-all-closed', function () {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
+    server.close();
     if (process.platform !== 'darwin') app.quit()
 })
 
